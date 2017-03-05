@@ -22,3 +22,7 @@ python genome_stat.py -i ../../GenomeAssembly/Assembly/final_assembly.fasta -s 1
 qsub cegs_eval.sh
 qsub bwa_map.sh
 ```
+##### Genome annotation using the pipeline Maker (detail in bash script)
+```
+qsub maker.sh
+```
