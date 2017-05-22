@@ -8,6 +8,10 @@ qsub sparse_assemble.sh
 qsub dbg2olc.sh
 qsub blasr.sh
 ```
+##### Assemble genome using Masurca approach
+```
+qsub masurca.sh
+```
 ##### Genome assembly evaluation
 ```
 python genome_stat.py -i final_assembly.fasta -s 1500000000
