@@ -29,3 +29,9 @@ sh repeat_annot.sh
 sh ab_initio_traning.sh
 sh maker.sh
 ```
+##### Update genome assembly and annotations using program AGOUTI
+```
+sh mapping.sh
+python annotation_by_AED.py --gff_file jalt_assembly.all.gff --AED_cutoff 0.45 --gff_out
+python agouti.py scaffold -assembly jalt_assembly.fa -bam JA0702.sort.bam -gff jalt_assembly_AED\=0.45_eAED\=1.0.gff3 -out tmp
+```
