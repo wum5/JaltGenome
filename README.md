@@ -1,7 +1,7 @@
 # JaltGenome
 
 ## Overview
-* Raw scripts/Pipeline for the "Jaltomato Genome" Project.
+* Raw scripts/Pipeline for the "Jaltomata Genome" Project.
 * Still in updating!
 
 ## Contributors 
