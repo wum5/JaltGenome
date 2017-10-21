@@ -43,6 +43,6 @@ qsub phylogeny_reconstruction.sh
 ```
 ##### Gene family analyses
 ```
-gene_family_analyses.sh
-go_enrichment.sh
+qsub gene_family_analyses.sh
+qsub go_enrichment.sh
 ```

@@ -1,0 +1,5 @@
+*.pyc
+*.Rhistory
+*.RData
+*DS_Store
+*old
