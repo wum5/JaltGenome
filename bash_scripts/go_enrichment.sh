@@ -17,7 +17,7 @@ python ../Scripts/lineage_specific_genes.py -i genefamily/updated_MCLout -s sinu
 
 ## pull out genes in significantly expanded/contracted families in sinuosa
 python ../../Scripts/fast_evol_family.py -i expanded_families_jalt.txt \
---c updated_MCLout --g ahrd_updated.txt -s sinuosa -o expanded_genes.txt
+-c updated_MCLout -g ahrd_updated.txt -s sinuosa -o expanded_genes.txt
 python ../../Scripts/fast_evol_family.py -i contracted_families_jalt.txt \
 --c updated_MCLout --g ahrd_updated.txt -s sinuosa -o contracted_genes.txt
 
@@ -27,8 +27,8 @@ cut -f2,7 expanded_genes.txt > expanded_go.txt
 
 ## Run Ontologizer v2.0
 java -Xmx258m -jar $OD/Ontologizer.jar -a jalt_sin_go.ids -g go.obo -s expanded_go.txt \
--p pop_genes.txt -c Parent-Child-Union
+-p pop_genes.txt -c Parent-Child-Union -m Benjamini-Hochberg
 java -Xmx258m -jar $OD/Ontologizer.jar -a jalt_sin_go.ids -g go.obo -s contracted_go.txt \
--p pop_genes.txt -c Parent-Child-Union
+-p pop_genes.txt -c Parent-Child-Union -m Benjamini-Hochberg
 java -Xmx258m -jar $OD/Ontologizer.jar -a jalt_sin_go.ids -g go.obo -s sinuosa_specific.txt \
--p pop_genes.txt -c Parent-Child-Union
+-p pop_genes.txt -c Parent-Child-Union -m Benjamini-Hochberg
