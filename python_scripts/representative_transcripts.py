@@ -13,23 +13,24 @@ def longest_isoform(infile):
 	Return a dictionary listing each gene with the number of amino acids from the longest isoform
 	"""
 	protein_dict = {}
-	for record in infile:
+	for record in SeqIO.parse(infile, "fasta"):
 		name = record.id.split('mRNA')[0]
 		if name not in protein_dict:
 			protein_dict[name]=len(str(record.seq))
 		elif len(str(record.seq)) > protein_dict[name]:
 			protein_dict[name]=len(str(record.seq))
+			
 	return protein_dict
 	
 
-def remove_redundant(infile, protein_dict, outfile):
+def remove_redundant(infile, protein_dict):
 	"""
 	remove redundant transcripts from a same gene based on the length of protein sequences
 	"""
 	update_list = []
-	outfile = open(outfile, "w")
+	outfile = open("representative_proteins.fa", "w")
 	
-	for record in infile:
+	for record in SeqIO.parse(infile, "fasta"):
 		name = record.id.split('mRNA')[0]
 		size = len(str(record.seq))
 		if protein_dict[name] == size:
@@ -44,24 +45,17 @@ def remove_redundant(infile, protein_dict, outfile):
 	
 	
 def main():
-	parser = argparse.ArgumentParser(prog="annotation_by_AED.py", description=__doc__,
+	parser = argparse.ArgumentParser(prog="representative_transcripts.py", description=__doc__,
 	formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('--fasta', required=True)	
-	parser.add_argument('--gff', required=True)
-	parser.add_argument('--outfile', required=True)
 	args = parser.parse_args()	
 	
-	handle = open(args.fasta, "r")
-	infile = SeqIO.parse(handle, "fasta")
-	outfile = args.outfile
+	infile = args.fasta
 	protein_dict = longest_isoform(infile)
-	infile.close()
 	
-	handle = open(args.fasta, "r")
-	infile = SeqIO.parse(handle, "fasta")
-	updata_list = remove_redundant(infile, protein_dict, outfile)
-	infile.close()
-
+	updata_list = remove_redundant(infile, protein_dict)
+	#print updata_list
+	
 	
 if __name__ == "__main__":
 	main()
