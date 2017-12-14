@@ -2,6 +2,8 @@
 
 ## Overview
 * Raw scripts/Pipeline for the "Jaltomata Genome" Project.
+* detailed information for each step are recorded in the corresponding bash script
+* Each bash script might combine scripts for multiple runs (need to check before running)
 * Still in updating!
 
 ## Contributors 
@@ -45,4 +47,12 @@ qsub phylogeny_reconstruction.sh
 ```
 qsub gene_family_analyses.sh
 qsub go_enrichment.sh
+##### Examination on SEUSS gene
 ```
+qsub candidate_analyze.sh
+```
+#####  Molecular evolution (dN/dS) analyses
+```
+qsub dnds_test.sh
+```
+
