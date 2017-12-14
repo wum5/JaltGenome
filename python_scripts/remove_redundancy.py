@@ -19,8 +19,8 @@ def remove_isoforms(cluster):
 		
 def filter_data(infile, species):
 	outfile = open("updated_MCLout", "w")
-	with open("mclOutput", "r") as infile:
-		for line in infile:
+	with open(infile, "r") as handle:
+		for line in handle:
 			line = line.rstrip()
 			updated_ids = remove_isoforms(line)
 			if any(item in updated_ids for item in species):

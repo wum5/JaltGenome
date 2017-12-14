@@ -6,7 +6,7 @@ using the python script from https://github.com/tctianchi/pyvenn. .
 For example, I tested gene family evolution in a representative 
 species in each of five genus of Solanaceae by using command: 
 python gene_cluster.py -i mclOutput -s sinuosa lycopersicum 
-annuum attenuata axillaris 
+annumm attenuata axillaris 
 """
 
 import argparse, itertools

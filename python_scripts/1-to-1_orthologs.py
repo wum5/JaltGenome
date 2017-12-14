@@ -26,7 +26,7 @@ def one2one_ortholog(infile, outDIR, seqfile, num):
 			with open(seqfile, "rU") as handle:
 				for record in SeqIO.parse(handle, "fasta"):
 					for x in xrange(len(seqids)):
-						if seqids[x] in record.id:
+						if seqids[x] in str(record.id):
 							outfile.write('>'+record.id+'\n')
 							outfile.write(str(record.seq)+'\n')
 			count += 1

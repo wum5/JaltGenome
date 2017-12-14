@@ -98,7 +98,7 @@ def convert_ids(infile, gfffile, species, version = '.1'):
 		gene_newid = species+last_scaff+'g'+order_index(gene_suffix[x])+version
 		outfile.write("%s\t%s\n" % (gene_oldid[x], gene_newid))
 								
-		updated_seq.write(gene_newid+'\n')
+		updated_seq.write('>'+gene_newid+'\n')
 		updated_seq.write(str(gene_seq[x])+'\n')
 								
 		replaced = re.sub((gene_oldid[x]).split('-mRNA-')[0], gene_newid, gff_lines[x])

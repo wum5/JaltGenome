@@ -10,11 +10,15 @@ import numpy as np
 
 def longest_isoform(infile):
 	"""
-	Return a dictionary listing each gene with the number of amino acids from the longest isoform
+	Return a dictionary listing each gene with the number of amino acids (AA) or bases 
+	(DNA) from the longest isoform
 	"""
 	protein_dict = {}
 	for record in SeqIO.parse(infile, "fasta"):
-		name = record.id.split('mRNA')[0]
+		if 'mRNA' in record.id:
+			name = record.id.split('mRNA')[0]
+		elif '.' in record.id:
+			name = record.id.split('.')[0]
 		if name not in protein_dict:
 			protein_dict[name]=len(str(record.seq))
 		elif len(str(record.seq)) > protein_dict[name]:
@@ -23,20 +27,27 @@ def longest_isoform(infile):
 	return protein_dict
 	
 
-def remove_redundant(infile, protein_dict):
+def remove_redundant(infile, type, seq_dict):
 	"""
-	remove redundant transcripts from a same gene based on the length of protein sequences
+	remove redundant transcripts from a same gene based on the length of sequences
 	"""
 	update_list = []
-	outfile = open("representative_proteins.fa", "w")
+	if type == "cds":
+		outfile = open("representative_cds.fa", "w")
+	elif type == "protein":
+		outfile = open("representative_proteins.fa", "w")
 	
 	for record in SeqIO.parse(infile, "fasta"):
-		name = record.id.split('mRNA')[0]
+		if 'mRNA' in record.id:
+			name = record.id.split('mRNA')[0]
+		elif '.' in record.id:
+			name = record.id.split('.')[0]
+			
 		size = len(str(record.seq))
-		if protein_dict[name] == size:
+		if seq_dict[name] == size:
 			outfile.write(">"+record.id+'\n')
 			outfile.write(str(record.seq)+'\n')
-			protein_dict[name] = -1
+			seq_dict[name] = -1
 			update_list.append(record.id)
 			
 	outfile.close()
@@ -48,12 +59,14 @@ def main():
 	parser = argparse.ArgumentParser(prog="representative_transcripts.py", description=__doc__,
 	formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('--fasta', required=True)	
+	parser.add_argument('--type', choices=("protein", "cds"), required=True)	
 	args = parser.parse_args()	
 	
 	infile = args.fasta
-	protein_dict = longest_isoform(infile)
+	type = args.type
+	seq_dict = longest_isoform(infile)
 	
-	updata_list = remove_redundant(infile, protein_dict)
+	updata_list = remove_redundant(infile, type, seq_dict)
 	#print updata_list
 	
 	

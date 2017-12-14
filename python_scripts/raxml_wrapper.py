@@ -14,7 +14,7 @@ import os, argparse
 
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser(prog="SlindingWindows", description=__doc__,
+	parser = argparse.ArgumentParser(prog="RAxML_SCR", description=__doc__,
 	formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('--inDIR', help=("the input directory"), required=True)
 	parser.add_argument('--outDIR', help=("the output directory"), required=True)
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 	bootstrap = args.bootstrap
 	
 	if args.type == "aa": model = "PROTCATWAG"
-	elif args.type == "DNA": model = "GTRCAT" 	
+	elif args.type == "DNA": model = "GTRGAMMA" 	
 	else:
 		print "Input data type: DNA or aa"
 		sys.exit()

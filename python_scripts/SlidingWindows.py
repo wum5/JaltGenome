@@ -88,7 +88,7 @@ def main():
 	formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument('-i', '--inDIR', help=("the input directory"), required=True)
 	parser.add_argument('-o', '--outDIR', help=("the output directory"), required=True)
-	parser.add_argument('-e', '--species_excluded', help=("the species not included in trimming"), default=None)
+	parser.add_argument('-e', '--species_excluded', help=("the species not included in trimming"), default='--')
 	parser.add_argument('-d', '--num_div', help=("number of divergent sites"), default=5)
 	parser.add_argument('-w', '--window_size', help=("size of sliding window"), default=15)
 	args = parser.parse_args()
