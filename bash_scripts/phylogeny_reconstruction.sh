@@ -27,7 +27,7 @@ python ../../Scripts/rename_seqs.py -i trimed_align/ -o renamed_align/
 
 
 ## Generate the RAxML phylogeny
-raxmlHPC-PTHREADS -T 8 -f a -x 12345 -N 100 -p 12345 -m GTRCAT -q concatenated.model \
+raxmlHPC-PTHREADS -T 8 -f a -x 12345 -N 100 -p 12345 -m GTRGAMMA -q concatenated.model \
 -s concatenated.phy -o A.thaliatha -n supermatrix
 
 
@@ -39,7 +39,7 @@ python ../../Scripts/raxml_wrapper.py --inDIR /N/dc2/projects/jaltomt/GenomeAsse
 
 ## Generate majority consensus tree
 cat genetree/* > genetrees.tre
-raxmlHPC -L MRE -z genetrees.tre -m GTRCAT -n T1
+raxmlHPC -L MRE -z genetrees.tre -m GTRGAMMA -n T1
 
 ## parse the proportions of gene trees supported for the ambiguous internode
 python ../../Scripts/parse_internode.py -i genetrees.tre -s C.annuumm J.sinuosa S.lycopersicum S.tuberosum
