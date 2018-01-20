@@ -9,7 +9,7 @@
 * [Genome Annotation](#genome-annotation)
 * [Comparative Genomic Analyses](#comparative-genomic-analyses)
 * 
-
+*
 
 ## Overview
 * Raw scripts/Pipeline for the "Jaltomata Genome" Project.
