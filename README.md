@@ -1,11 +1,11 @@
 # JaltGenome
 
 ## Table of Contents
-<img align="right" src="images/FIGURE_1.png" width="230" height="200">
+<img align="right" src="FIGURE_1.png" width="230" height="200">
 
 * [Overview](#overview)
 * [Contributors](#contributors)
-* [De novo Asseemble Genome](#de-novo-asseemble-genome)
+* [De novo Asseemble Genome](#de-novo-assemble-genome)
 * [Genome Annotation](#genome-annotation)
 * [Comparative Genomic Analyses](#comparative-genomic-analyses)
 * 
