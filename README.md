@@ -1,15 +1,14 @@
 # JaltGenome
 
 ## Table of Contents
-<img align="right" src="FIGURE_1.png" width="230" height="200">
+<img align="right" src="FIGURE_1.png" width="350" height="300">
 
 * [Overview](#overview)
 * [Contributors](#contributors)
 * [De novo Asseemble Genome](#de-novo-assemble-genome)
 * [Genome Annotation](#genome-annotation)
 * [Comparative Genomic Analyses](#comparative-genomic-analyses)
-* 
-*
+
 
 ## Overview
 * Raw scripts/Pipeline for the "Jaltomata Genome" Project.
