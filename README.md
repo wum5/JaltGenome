@@ -1,7 +1,7 @@
 # JaltGenome
 
 ## Table of Contents
-<img align="right" src="images/FIGURE_1.png" width="500" height="320">
+<img align="right" src="images/FIGURE_1.png" width="300" height="320">
 
 * [Overview](#overview)
 * [Contributors](#contributors)
