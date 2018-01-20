@@ -1,5 +1,15 @@
 # JaltGenome
 
+## Table of Contents
+<img align="right" src="images/FIGURE_1.png" width="500" height="320">
+
+* [Overview](#overview)
+* [Contributors](#contributors)
+* [De novo Asseemble Genome](#de-novo-asseemble-genome)
+* [Genome Annotation](#genome-annotation)
+* [Comparative Genomic Analyses](#comparative-genomic-analyses)
+
+
 ## Overview
 * Raw scripts/Pipeline for the "Jaltomata Genome" Project.
 * detailed information for each step are recorded in the corresponding bash script
@@ -10,7 +20,7 @@
 * Meng Wu
 * https://github.com/wum5/JaltGenome
 
-## De novo asseemble genome
+## De novo Assemble Genome
 ##### Assemble genome using Masurca approach
 ```
 qsub masurca.sh
@@ -26,6 +36,7 @@ qsub mapping.sh
 qsub blast_contaminants.sh
 qsub organelle_assembly.sh
 ```
+## Genome Annotation
 ##### RepeatMasking and train gene predictors
 ```
 qsub repeat_annot2.sh
@@ -38,6 +49,7 @@ qsub maker.sh
 ```
 qsub function_annotation.sh
 ```
+## Comparative Genomic Analyses
 ##### Phylogenetic analyses
 ```
 qsub ortholog_inference.sh
