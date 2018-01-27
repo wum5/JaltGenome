@@ -1,22 +1,24 @@
 #!/bin/bash
 
-#PBS -N maker
-#PBS -l nodes=1:ppn=1,walltime=24:00:00,vmem=12gb
+#PBS -N MAKER
+#PBS -l nodes=1:ppn=1,walltime=8:00:00,vmem=16gb
 #PBS -m bea
 #PBS -M wum5@umail.iu.edu
 
 
-module load maker/2.31.6
+module load maker
 module load mpich2/1.4.1-gnu
 module load blat
 module load gcc/4.9.2
+module load python
+module load biopython 
 export TMPDIR=/N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation/tmp
 cd /N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation
 
 
 ######### ab initio gene prediction ##########
 # I used 16 scaffolds > 2000000 bps (totalling ~40 Mbps), my file was called scaffold_min_2000000.fa
-#python ../Scripts/genome_stat.py -i jalt_assembly.fa -gs 1500000000 -m 2000000
+python ../Scripts/genome_stat.py -i jalt_assembly.fa -gs 1500000000 -m 2000000
 
 ######### Edit the file so the following applies in maker_opts.ctl:
 #genome=scaffold_min_2000000.fa
@@ -32,21 +34,21 @@ cd /N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation
 #single_exon=1
 
 ########### 1st round training (takes ~5h; 16 CPU) ############
-#mpiexec -n 16 maker --ignore_nfs_tmp </dev/null 
+mpiexec -n 16 maker --ignore_nfs_tmp </dev/null 
 
-#cd scaffold_min_2000000.maker.output
-#maker2zff -n -d scaffold_min_2000000_master_datastore_index.log
-#fathom genome.ann genome.dna -gene-stats
-#fathom genome.ann genome.dna -validate
-#cd ..
-#mkdir snap
-#cp scaffold_min_2000000.maker.output/genome.ann scaffold_min_2000000.maker.output/genome.dna snap/
-#cd snap
-#fathom -categorize 1000 genome.ann genome.dna
-#fathom -export 1000 -plus uni.ann uni.dna
-#forge export.ann export.dna
-#hmm-assembler.pl Pult . > Pult.hmm
-#cd ..
+cd scaffold_min_2000000.maker.output
+maker2zff -n -d scaffold_min_2000000_master_datastore_index.log
+fathom genome.ann genome.dna -gene-stats
+fathom genome.ann genome.dna -validate
+cd ..
+mkdir snap
+cp scaffold_min_2000000.maker.output/genome.ann scaffold_min_2000000.maker.output/genome.dna snap/
+cd snap
+fathom -categorize 1000 genome.ann genome.dna
+fathom -export 1000 -plus uni.ann uni.dna
+forge export.ann export.dna
+hmm-assembler.pl Pult . > Pult.hmm
+cd ..
 
 
 ########### 2nd round prediction ############
@@ -57,19 +59,19 @@ cd /N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation
 #protein2genome=0
 
 ########### 2nd round training (take ~1h; 16 CPU) ############ 
-#mpiexec -n 16 maker --ignore_nfs_tmp </dev/null
-#cd scaffold_min_2000000.maker.output
-#rm genome.ann
-#rm genome.dna
-#maker2zff -n -d scaffold_min_2000000_master_datastore_index.log
-#cd ..
-#mkdir snap2
-#cp scaffold_min_2000000.maker.output/genome.ann scaffold_min_2000000.maker.output/genome.dna snap2/
-#cd snap2
-#fathom -categorize 1000 genome.ann genome.dna
-#fathom -export 1000 -plus uni.ann uni.dna
-#forge export.ann export.dna
-#hmm-assembler.pl Pult . > Pult2.hmm
+mpiexec -n 16 maker --ignore_nfs_tmp </dev/null
+cd scaffold_min_2000000.maker.output
+rm genome.ann
+rm genome.dna
+maker2zff -n -d scaffold_min_2000000_master_datastore_index.log
+cd ..
+mkdir snap2
+cp scaffold_min_2000000.maker.output/genome.ann scaffold_min_2000000.maker.output/genome.dna snap2/
+cd snap2
+fathom -categorize 1000 genome.ann genome.dna
+fathom -export 1000 -plus uni.ann uni.dna
+forge export.ann export.dna
+hmm-assembler.pl Pult . > Pult2.hmm
 
 
 ########### Convert MAKER2 GFF predictions into Augustus HMM (32h) ############
@@ -80,9 +82,9 @@ PATH=$PATH:/N/dc2/projects/jaltomt/Softwares/augustus-3.2.3/scripts
 # Pay attention here (test whether could add species Dir)
 export AUGUSTUS_CONFIG_PATH=/N/dc2/projects/jaltomt/Softwares/augustus-3.2.3/config
 
-#zff2gff3.pl genome.ann | perl -plne 's/\t(\S+)$/\t\.\t$1/' > genome.gff3
-#autoAug.pl --genome=$genome --species=$species --cdna=$cdna --trainingset=genome.gff3 -v --singleCPU --useexisting
-#cd ..
+zff2gff3.pl genome.ann | perl -plne 's/\t(\S+)$/\t\.\t$1/' > genome.gff3
+autoAug.pl --genome=$genome --species=$species --cdna=$cdna --trainingset=genome.gff3 -v --singleCPU --useexisting
+cd ..
 
 
 ########### MAKER run ########### 
@@ -104,15 +106,16 @@ export AUGUSTUS_CONFIG_PATH=/N/dc2/projects/jaltomt/Softwares/augustus-3.2.3/con
 #alt_splice=1
 
 ########### run MAKER (split into 6 parts to run using 16 CPU and each takes ~100h) ############ 
-#fasta_tool --chunks 6 jalt_assembly.fasta 
-#mpiexec -n 16 maker -g jalt_assembly_0.fasta -base jalt_assembly --ignore_nfs_tmp 
-#mpiexec -n 16 maker -g jalt_assembly_1.fasta -base jalt_assembly --ignore_nfs_tmp
-#mpiexec -n 16 maker -g jalt_assembly_2.fasta -base jalt_assembly --ignore_nfs_tmp 
-#mpiexec -n 16 maker -g jalt_assembly_3.fasta -base jalt_assembly --ignore_nfs_tmp 
-#mpiexec -n 16 maker -g jalt_assembly_4.fasta -base jalt_assembly --ignore_nfs_tmp 
-#mpiexec -n 16 maker -g jalt_assembly_5.fasta -base jalt_assembly --ignore_nfs_tmp 
-#maker -g jalt_assembly_1.fasta -base jalt_assembly --ignore_nfs_tmp -tries 5
-#maker -dsindex -g jalt_assembly.fasta --ignore_nfs_tmp
+fasta_tool --chunks 6 jalt_assembly.fasta 
+mpiexec -n 16 maker -g jalt_assembly_0.fasta -base jalt_assembly --ignore_nfs_tmp 
+mpiexec -n 16 maker -g jalt_assembly_1.fasta -base jalt_assembly --ignore_nfs_tmp
+mpiexec -n 16 maker -g jalt_assembly_2.fasta -base jalt_assembly --ignore_nfs_tmp 
+mpiexec -n 16 maker -g jalt_assembly_3.fasta -base jalt_assembly --ignore_nfs_tmp 
+mpiexec -n 16 maker -g jalt_assembly_4.fasta -base jalt_assembly --ignore_nfs_tmp 
+mpiexec -n 16 maker -g jalt_assembly_5.fasta -base jalt_assembly --ignore_nfs_tmp 
+mpiexec -n 4 maker -g jalt_assembly_6.fasta -base jalt_assembly -ignore_nfs_tmp
+maker -g jalt_assembly_5.fasta -base jalt_assembly --ignore_nfs_tmp -tries 5
+maker -dsindex -g jalt_assembly.fasta --ignore_nfs_tmp
 
 cd jalt_assembly.maker.output
 gff3_merge -d jalt_assembly_master_datastore_index.log
@@ -120,13 +123,21 @@ fasta_merge -d jalt_assembly_master_datastore_index.log
 
 ########### extract AED < 1 genes only from MAKER output ########### 
 PATH=$PATH:/N/dc2/projects/jaltomt/GenomeAssembly/Scripts
-perl -lne 'print $1 if /\tmRNA\t.+ID=([^;]+).+_AED=(.+?);/ and $2<=0.45' jalt_assembly.all.gff > jalt_assembly.aed-0.45.ids
+## extract genes with AED cutoff of 0.6 to get a comparable number of genes relative other Solanaceae genome
+python ../../Scripts/annotation_by_aed.py --gff jalt_assembly.all.gff --AED 0.6 --out
+## get a summary of gene annotation
+python ../../Scripts/annotation_stats.py --gff jalt_assembly.aed.0.6.gff3 
 
-fgrep.pl -f jalt_assembly.aed-0.45.ids jalt_assembly.all.gff -d "=|;|,|:" > jalt_assembly.aed-0.45.gff
-fastaqual_select.pl -f jalt_assembly.all.maker.proteins.fasta -inc jalt_assembly.aed-0.45.ids > jalt_assembly.proteins.aed=0.45.fasta
+## extract the representative (longest) protein sequences 
+perl -lne 'print $1 if /\tmRNA\t.+ID=([^;]+).+_AED=(.+?);/ and $2<=0.6' jalt_assembly.all.gff > jalt_assembly.aed-0.6.ids
+perl ../../Scripts/fastaqual_select.pl -f jalt_assembly.all.maker.proteins.fasta -inc jalt_assembly.aed-0.6.ids > jalt_assembly.proteins.aed-0.6.fasta
+python ../../Scripts/representative_transcripts.py --fasta jalt_assembly.proteins.aed-0.6.fasta
 
-python annotation_by_AED.py --gff jalt_assembly.all.gff --AED 0.45 jalt_assembly.aed-0.45
+## change the gene IDs into more human readable names 
+python ../../Scripts/convert_geneids.py -i representative_proteins.fa -g jalt_assembly.aed.0.6.gff3
 
-
+## extract cds for representative genes
+../../Softwares/gffread/gffread -x all_cds -g jalt_assembly.fa updated_geneids.gff
+python ../Scripts/representative_transcripts.py --fasta all_cds.fa --type cds
 
 
