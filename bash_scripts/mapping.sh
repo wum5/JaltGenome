@@ -21,7 +21,7 @@ ThreadN=8
 
 
 ### DNA mapping 
-#cd /N/dc2/projects/jaltomt/GenomeAssembly/IlluminaReads
+cd /N/dc2/projects/jaltomt/GenomeAssembly/IlluminaReads
 trimmomatic-0.36 PE -phred33 -threads $ThreadN raw_reads1.fq raw_reads2.fq xfiltered_reads1_paired.fq \
 xfiltered_reads1_unpaired.fq xfiltered_reads2_paired.fq xfiltered_reads2_unpaired.fq \
 ILLUMINACLIP:TruSeq2-PE.fa:2:30:10:2 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:50
@@ -43,7 +43,7 @@ samtools view -h dna_seqs.sort.bam | grep -v -e 'XA:Z:' -e 'SA:Z:' | samtools vi
 cd /N/dc2/projects/jaltomt/GenomeAssembly/Mapping/rna
 OD=/N/dc2/projects/jaltomt/Phylogenomics/KEY_FILES/rawdata
 
-#STAR --runMode genomeGenerate --genomeDir ./ --genomeFastaFiles jalt_assembly.fa --runThreadN $ThreadN
+STAR --runMode genomeGenerate --genomeDir ./ --genomeFastaFiles jalt_assembly.fa --runThreadN $ThreadN
 
 ## Mapping different libraries including:JA0432,JA0450,JA0456,JA0608,JA0694,JA0701,JA0702,
 ## JA0711,JA0719,JA0723,JA0726,JA0798,JA0816
@@ -71,8 +71,12 @@ done
 
 # Get mapping statistics 
 cd finalData
-featureCounts -a ../updated_geneids.gff3 -o uniquely_mapped_counts.txt \
--g ID -t gene -T $ThreadN *.sort.bam
-featureCounts -a ../updated_geneids.gff3 -o multiply_mapped_counts.txt \
--M -g ID -t gene -T $ThreadN *.sort.bam
+gffread updated_geneids.gff3 -T -o updated_geneids.gtf
+featureCounts -a updated_geneids.gtf -o uniquely_mapped_counts.txt \
+-p -T $ThreadN *.sort.bam
+featureCounts -a updated_geneids.gtf -o multiply_mapped_counts.txt \
+-p -M -T $ThreadN *.sort.bam
+
+grep -v '^#' uniquely_mapped_counts.txt | cut -f2-5 --complement > uniquely_mapped_stats.txt
+sed -i 's/.sort.bam//g' uniquely_mapped_stats.txt
 

@@ -16,22 +16,41 @@ export TMPDIR=/N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation/tmp
 cd /N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation
 
 
+######### A function to edit CONFIG file ######### 
+function set_config(){
+CONFIGFILE=$1
+TARGET_KEY=$2
+REPLACEMENT_VALUE=$3
+sed -i "s/^\($TARGET_KEY\s*=\s*\).*\$/\1$REPLACEMENT_VALUE/" $CONFIGFILE;
+}
+
 ######### ab initio gene prediction ##########
 # I used 16 scaffolds > 2000000 bps (totalling ~40 Mbps), my file was called scaffold_min_2000000.fa
 python ../Scripts/genome_stat.py -i jalt_assembly.fa -gs 1500000000 -m 2000000
 
 ######### Edit the file so the following applies in maker_opts.ctl:
 #genome=scaffold_min_2000000.fa
+set_config maker_opts.ctl "genome" "scaffold_min_2000000.fa"
 #est=JA0702_trinity.fasta
+set_config maker_opts.ctl "est" "JA0702_trinity.fasta"
 #protein=uniprot_solanaceae.fasta
+set_config maker_opts.ctl "protein" "uniprot_solanaceae.fasta"
 #rmlib=allRepeats.lib
+set_config maker_opts.ctl "rmlib" "allRepeats.lib"
 #repeat_protein=te_proteins.fasta
+set_config maker_opts.ctl "repeat_protein" "te_proteins.fasta"
 #snaphmm=jaltomata.cegmasnap.hmm
+set_config maker_opts.ctl "snaphmm" "jaltomata.cegmasnap.hmm"
 #gmhmm=gmhmm.mod
+set_config maker_opts.ctl "gmhmm" "gmhmm.mod"
 #est2genome=1
+set_config maker_opts.ctl "est2genome" "1"
 #protein2genome=1
+set_config maker_opts.ctl "protein2genome" "1"
 #keep_preds=1
+set_config maker_opts.ctl "keep_preds" "1"
 #single_exon=1
+set_config maker_opts.ctl "single_exon" "1"
 
 ########### 1st round training (takes ~5h; 16 CPU) ############
 mpiexec -n 16 maker --ignore_nfs_tmp </dev/null 
@@ -55,8 +74,11 @@ cd ..
 
 ######### Edit the file to change the following applied in maker_opts.ctl:
 #snaphmm=snap/Pult.hmm
+set_config maker_opts.ctl "snaphmm" "snap/Pult.hmm"
 #est2genome=0
+set_config maker_opts.ctl "est2genome" "0"
 #protein2genome=0
+set_config maker_opts.ctl "protein2genome" "0"
 
 ########### 2nd round training (take ~1h; 16 CPU) ############ 
 mpiexec -n 16 maker --ignore_nfs_tmp </dev/null
@@ -75,9 +97,9 @@ hmm-assembler.pl Pult . > Pult2.hmm
 
 
 ########### Convert MAKER2 GFF predictions into Augustus HMM (32h) ############
-#cdna=/N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation/JA0702_trinity.fasta
-#genome=/N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation/scaffold_min_2000000.fa
-#species=jaltomata
+cdna=/N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation/JA0702_trinity.fasta
+genome=/N/dc2/projects/jaltomt/GenomeAssembly/GeneAnnotation/scaffold_min_2000000.fa
+species=jaltomata
 PATH=$PATH:/N/dc2/projects/jaltomt/Softwares/augustus-3.2.3/scripts
 # Pay attention here (test whether could add species Dir)
 export AUGUSTUS_CONFIG_PATH=/N/dc2/projects/jaltomt/Softwares/augustus-3.2.3/config
@@ -94,16 +116,25 @@ cd ..
 
 ######### Edit the file to change the following applied in maker_exe.ctl
 #tRNAscan-SE=/N/dc2/projects/jaltomt/Softwares/tRNAscan-SE-1.3.1/tRNAscan-SE #location of trnascan executable
+set_config maker_exe.ctl "tRNAscan-SE" "/N/dc2/projects/jaltomt/Softwares/tRNAscan-SE-1.3.1/tRNAscan-SE"
 #snoscan=/N/dc2/projects/jaltomt/Softwares/snoscan-0.9.1/snoscan #location of snoscan executable
+set_config maker_exe.ctl "snoscan" "/N/dc2/projects/jaltomt/Softwares/snoscan-0.9.1/snoscan"
 
 ######### Edit the file to change the following applied in maker_opts.ctl:
 #genome=jalt_assembly.fa
+set_config maker_exe.ctl "genome" "jalt_assembly.fa"
 #augustus_species=jaltomata
+set_config maker_exe.ctl "augustus_species" "jaltomata"
 #snaphmm=snap2/Pult2.hmm
+set_config maker_exe.ctl "snaphmm" "snap2/Pult2.hmm"
 #trna=1
+set_config maker_exe.ctl "trna" "1"
 #pred_stats=1
+set_config maker_exe.ctl "pred_stats" "1"
 #min_protein=30
+set_config maker_exe.ctl "min_protein" "30"
 #alt_splice=1
+set_config maker_exe.ctl "alt_splice" "1"
 
 ########### run MAKER (split into 6 parts to run using 16 CPU and each takes ~100h) ############ 
 fasta_tool --chunks 6 jalt_assembly.fasta 
